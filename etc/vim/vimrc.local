@@ -1,0 +1,102 @@
+" load vim-latexsuite,.. plugins
+filetype plugin on
+
+set nobackup
+set nocompatible
+set backspace=2
+set mouse=a
+
+" use normal tabsize, but use 4 spaces to indent
+set tabstop=8
+set shiftwidth=4
+set softtabstop=4
+
+" don't use spaces instead of tabs
+set noexpandtab
+
+" autoindent, wrap comments, not text
+set formatoptions=croq cindent sw=4 ts=8
+set nocindent
+set autoindent
+set smartindent
+set showmatch
+set showcmd
+
+" toggle paste mode (disable indenting)
+set pastetoggle=<F11>
+
+" toggle mouse mode (for copy/visual switching)
+map <F10> :call MouseOnOff()<CR>
+imap <F10> <C-O>:call MouseOnOff()<CR>
+
+" 0: off, 1: on
+let mouseMode=1
+" toggle mouse mode
+func MouseOnOff()
+    if g:mouseMode == 0
+        set mouse=a
+        let g:mouseMode = 1
+    else
+        set mouse=
+        let g:mouseMode = 0
+    endif
+    return
+endfunc
+
+syntax on
+
+if has("syntax")
+    " better color for comments
+    highlight Comment term=bold cterm=bold ctermfg=4
+endif
+
+" Some settings for latex:
+" grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+" Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+" if you write your \label's as \label{fig:something}, then if you
+" type in \ref{fig: and press <C-n> you will automatically cycle through
+" all the figure labels. Very useful!
+autocmd FileType tex set iskeyword+=:
+" disable placeholder insertion
+" let g:Imap_UsePlaceHolders = 0
+" disable auto folding 
+let g:Tex_AutoFolding = 0
+
+" no folding on new files
+set foldlevelstart=99
+
+" do not indent with comments in txt files, use auto-wrap
+autocmd BufEnter *.txt,*.tex set fo-=ro
+autocmd BufEnter *.txt,*.tex set fo+=tcq
+autocmd BufEnter *.txt,*.tex set textwidth=140
+
+" default syntax
+au BufEnter SConstruct  set filetype=python
+au BufEnter SConscript* set filetype=python
+au BufEnter *.cu        set filetype=cpp
+au BufEnter *.gnu       set filetype=gnuplot
+au BufEnter *.gp        set filetype=gnuplot
+
+" Set F12 to store current state
+map <F12> :mkview!<CR>
+imap <F12> <C-O>:mkview!<CR>
+
+" Don't create views for every file, but load automatically if present
+" au BufWinLeave * mkview
+au BufWinEnter * silent! loadview
+
+let g:fencview_autodetect=0
+
+" Fancy menu stuff
+source $VIMRUNTIME/menu.vim
+set wildmenu
+set cpo-=<
+set wcm=<C-Z>
+map <F4> :emenu <C-Z>
+
