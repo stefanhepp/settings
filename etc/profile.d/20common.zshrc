@@ -7,10 +7,6 @@
 # load default keybindings
 bindkey -e
 
-# enable autocompletion
-autoload -U compinit
-compinit
-
 # some completion extensions
 setopt correctall
 setopt extendedglob

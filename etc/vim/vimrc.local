@@ -23,7 +23,7 @@ set showmatch
 set showcmd
 
 " toggle paste mode (disable indenting)
-set pastetoggle=<F11>
+set pastetoggle=<F9>
 
 " toggle mouse mode (for copy/visual switching)
 map <F10> :call MouseOnOff()<CR>
