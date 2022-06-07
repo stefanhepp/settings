@@ -1,0 +1,6 @@
+The AppImage icons have been sourced from:
+
+FreeCAD: https://iconarchive.com/show/papirus-apps-icons-by-papirus-team/freecad-icon.html
+bCNC: https://github.com/vlachoudis/bCNC
+PrusaSlicer: https://github.com/prusa3d/PrusaSlicer
+
