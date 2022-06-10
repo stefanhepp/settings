@@ -1,3 +1,5 @@
 EDITOR=vim
 export EDITOR
 
+PATH=$HOME/bin:$HOME/.local/bin:$PATH
+export PATH
