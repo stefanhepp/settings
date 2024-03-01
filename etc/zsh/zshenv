@@ -18,7 +18,7 @@ then
 fi
 
 for i in `find /etc/profile.d -iname "*.env" -o -iname "*.zshenv" | sort`; do
-        if [ -e $i ]; then
+        if [ -r $i ]; then
                 . $i
         fi
 done

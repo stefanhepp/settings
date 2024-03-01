@@ -6,8 +6,8 @@
 #
 # Global Order: zshenv, zprofile, zshrc, zlogin
 
-for i in `find /etc/profile.d -iname "*.profile" -o -iname "*.zprofile" | sort`; do
-	if [ -e $i ]; then
+for i in `find /etc/profile.d -iname "*.sh" -o -iname "*.profile" -o -iname "*.zprofile" | sort`; do
+	if [ -r $i ]; then
 		. $i
 	fi
 done

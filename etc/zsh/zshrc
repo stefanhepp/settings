@@ -112,7 +112,7 @@ if grep -q '^ID.*=.*ubuntu' /etc/os-release && [[ -z "$skip_global_compinit" ]];
 fi
 
 for i in `find /etc/profile.d -iname "*.shrc" -o -iname "*.zshrc" | sort`; do
-        if [ -e $i ]; then
+        if [ -r $i ]; then
                 . $i
         fi
 done
