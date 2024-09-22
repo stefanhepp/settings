@@ -15,6 +15,11 @@ install_settings() {
     sudo usermod -s /bin/zsh `whoami`
     test -f ~/.vimrc || cp -av home/.vimrc* ~/
     test -f ~/.zshrc || cp -av home/.zshrc ~/
+    mkdir -p ~/Apps/Icons
+    cp -avf home/Apps/Icons/* ~/Apps/Icons
+    mkdir -p ~/.ssh
+    mkdir -p ~/tmp
+    test -f ~/.ssh/config || cp -av home/.ssh/config ~/.ssh/
 }
 
 install_grub() {
