@@ -85,6 +85,15 @@ install_vscode() {
     sudo apt install code
 }
 
+install_snapapps() {
+    echo
+    echo "**** Installing Snap applications ..."
+    echo
+    sudo snap install drawio
+    sudo snap install pycharm-community
+    sudo snap install freecad
+}
+
 help() {
     echo "Usage: ./install.sh [all|grub|onedrive]"
     exit 0
@@ -108,9 +117,13 @@ case $1 in
 	install_grub
 	install_vscode
 	install_onedrive
+	install_snapapps
 	;;
     grub)
 	install_grub
+	;;
+    snapapps)
+	install_snapapps
 	;;
     onedrive)
 	install_onedrive
