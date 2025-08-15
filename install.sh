@@ -42,7 +42,7 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install vim zsh screeni curl ksshaskpass blender audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3
+    sudo apt install vim zsh screen ksshaskpass blender audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl
     sudo apt install krusader krename arj rar unrar smb4k
     sudo apt install python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
 }
@@ -119,12 +119,12 @@ case $1 in
 	;;
     all)
 	install_packages
-	install_apps
 	install_settings
 	install_timezone
 	install_grub
 	install_vscode
 	install_onedrive
+	install_apps
 	;;
     apps)
 	install_apps
