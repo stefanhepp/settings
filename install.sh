@@ -42,8 +42,24 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install vim zsh screen ksshaskpass blender audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3
+    sudo apt install vim zsh screeni curl ksshaskpass blender audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3
+    sudo apt install krusader krename arj rar unrar smb4k
     sudo apt install python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+}
+
+install_apps() {
+    echo
+    echo "*** Installing snaps and flatpaks ..."
+    echo
+    sudo apt install flatpak
+    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+    sudo snap install drawio
+    sudo snap install freecad
+    sudo snap install pycharm-community --classic
+    sudo snap install steam
+    
+    sudo flatpak install com.xnview.XnViewMP -y
 }
 
 install_onedrive() {
@@ -103,11 +119,15 @@ case $1 in
 	;;
     all)
 	install_packages
+	install_apps
 	install_settings
 	install_timezone
 	install_grub
 	install_vscode
 	install_onedrive
+	;;
+    apps)
+	install_apps
 	;;
     grub)
 	install_grub
