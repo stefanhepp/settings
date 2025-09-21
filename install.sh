@@ -42,9 +42,29 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install vim zsh screen ksshaskpass blender audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl
-    sudo apt install krusader krename arj rar unrar smb4k
-    sudo apt install python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+    sudo apt install -y vim zsh screen ksshaskpass audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl
+    sudo apt install -y krusader krename arj rar unrar smb4k kde-config-flatpak
+    sudo apt install -y python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+}
+
+install_mozilla_flatpak() {
+    echo
+    echo "*** Replacing Mozilla snaps with flatpak ..."
+    echo
+
+    # Remove Ubuntu snap
+    sudo snap remove firefox
+    sudo rm -f /etc/apparmor.d/usr.bin.firefox
+    sudo rm -f /etc/apparmor.d/local/usr.bin.firefox
+    sudo systemctl stop var-snap-firefox-common-host\\x2dhunspell.mount
+    sudo systemctl disable var-snap-firefox-common-host\\x2dhunspell.mount
+    sudo snap remove firefox
+    sudo snap remove thunderbird
+
+    # Install flatpak
+    sudo flatpak install -y \
+        org.mozilla.firefox \
+        org.mozilla.Thunderbird
 }
 
 install_apps() {
@@ -54,28 +74,73 @@ install_apps() {
     sudo apt install flatpak
     sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-    sudo snap install drawio
-    sudo snap install freecad
-    sudo snap install pycharm-community --classic
-    sudo snap install steam
-    
-    sudo flatpak install com.xnview.XnViewMP -y
+    sudo flatpak install -y \
+        org.freecad.FreeCAD \
+        com.xnview.XnViewMP \
+        com.jgraph.drawio.desktop \
+        com.jetbrains.PyCharm-Community \
+        com.prusa3d.PrusaSlicer \
+        com.valvesoftware.Steam \
+        com.valvesoftware.SteamLink \
+        com.obsproject.Studio \
+        org.jdownloader.JDownloader \
+	org.blender.Blender \
+	com.github.tchx84.Flatseal
+
+    # Install supporting packages
+    sudo apt install -y steam-devices
+
+    # Temporary workaround for jdownloader
+    sudo flatpak update --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
+    flatpak run org.jdownloader.JDownloader
+    flatpak update org.jdownloader.JDownloader
 }
+
+install_doublecommander() {
+    echo 'deb http://download.opensuse.org/repositories/home:/Alexx2000/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:Alexx2000.list
+    curl -fsSL https://download.opensuse.org/repositories/home:Alexx2000/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_Alexx2000.gpg > /dev/null
+    sudo apt update
+    sudo apt install -y doublecmd-qt6
+}
+
+upgrade_curl() {
+    echo
+    echo "*** Installing curl to 8.14.1 in /usr/local ..."
+    echo 
+    sudo apt install -y nghttp2 libnghttp2-dev libssl-dev libpsl-dev build-essential wget
+    tmp=`mktemp -d`
+    cd $tmp
+    wget https://curl.se/download/curl-8.14.1.tar.xz
+    tar -xvf curl-8.14.1.tar.xz
+    rm -f curl-8.14.1.tar.xz
+    cd curl-8.14.1
+    ./configure --prefix=/usr/local --with-ssl --with-nghttp2 --enable-versioned-symbols
+    make
+    sudo make install
+    sudo ldconfig
+    cd ~
+    rm -rf $tmp
+    /usr/local/bin/curl --version
+}
+
 
 install_onedrive() {
     echo
-    echo "*** Removing old nedrive installation ..."
+    echo "*** Removing old onedrive installation ..."
     echo
     sudo apt remove onedrive
     sudo add-apt-repository --remove ppa:yann1ck/onedrive
     sudo rm -f /etc/systemd/user/default.target.wants/onedrive.service
+
+    upgrade_curl
+
     echo
     echo "*** Installing new onedrive application ..."
     echo
     wget -qO - https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /usr/share/keyrings/obs-onedrive.gpg > /dev/null
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/obs-onedrive.gpg] https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_24.04/ ./" | sudo tee /etc/apt/sources.list.d/onedrive.list
     sudo apt update
-    sudo apt install --no-install-recommends --no-install-suggests onedrive
+    sudo apt install --no-install-recommends --no-install-suggests -y onedrive
     echo
     echo "*** Starting onedrive service ..."
     echo
@@ -125,6 +190,8 @@ case $1 in
 	install_vscode
 	install_onedrive
 	install_apps
+	install_mozilla_flatpak
+	#install_doublecommander
 	;;
     apps)
 	install_apps
@@ -132,8 +199,14 @@ case $1 in
     grub)
 	install_grub
 	;;
+    mozilla)
+	install_mozilla_flatpak
+	;;
     onedrive)
 	install_onedrive
+	;;
+    doublecommander)
+	install_doublecommander
 	;;
     code)
 	install_vscode
