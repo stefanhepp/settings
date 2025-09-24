@@ -91,9 +91,9 @@ install_apps() {
     sudo apt install -y steam-devices
 
     # Temporary workaround for jdownloader
-    sudo flatpak update --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
+    sudo flatpak update -y --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
     flatpak run org.jdownloader.JDownloader
-    flatpak update org.jdownloader.JDownloader
+    flatpak update -y org.jdownloader.JDownloader
 }
 
 install_doublecommander() {
