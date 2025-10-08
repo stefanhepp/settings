@@ -65,6 +65,8 @@ install_mozilla_flatpak() {
     sudo flatpak install -y \
         org.mozilla.firefox \
         org.mozilla.Thunderbird
+
+    flatpak override --user org.mozilla.firefox --talk-name=org.freedesktop.ScreenSaver
 }
 
 install_apps() {
@@ -78,10 +80,11 @@ install_apps() {
         org.freecad.FreeCAD \
         com.xnview.XnViewMP \
         com.jgraph.drawio.desktop \
-        com.jetbrains.PyCharm-Community \
+	com.jetbrains.PyCharm-Professional \
         com.prusa3d.PrusaSlicer \
         com.valvesoftware.Steam \
         com.valvesoftware.SteamLink \
+	com.usebottles.bottles \
         com.obsproject.Studio \
         org.jdownloader.JDownloader \
 	org.blender.Blender \
@@ -89,6 +92,10 @@ install_apps() {
 
     # Install supporting packages
     sudo apt install -y steam-devices
+
+    # Setup permissions
+    flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
+    flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
 
     # Temporary workaround for jdownloader
     sudo flatpak update --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
