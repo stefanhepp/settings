@@ -73,7 +73,7 @@ install_apps() {
     echo
     echo "*** Installing snaps and flatpaks ..."
     echo
-    sudo apt install flatpak
+    sudo apt install -y flatpak
     sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
     sudo flatpak install -y \
