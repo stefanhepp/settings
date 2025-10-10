@@ -69,6 +69,15 @@ install_mozilla_flatpak() {
     flatpak override --user org.mozilla.firefox --talk-name=org.freedesktop.ScreenSaver
 }
 
+install_kicad() {
+    echo
+    echo "*** Installing KiCAD ..."
+    echo
+    sudo add-apt-repository --yes ppa:kicad/kicad-9.0-releases
+    sudo apt update
+    sudo apt install --install-recommends kicad
+}
+
 install_apps() {
     echo
     echo "*** Installing snaps and flatpaks ..."
@@ -88,7 +97,8 @@ install_apps() {
         com.obsproject.Studio \
         org.jdownloader.JDownloader \
 	org.blender.Blender \
-	com.github.tchx84.Flatseal
+	com.github.tchx84.Flatseal \
+	io.github.Omniaevo.mqtt5-explorer	
 
     # Install supporting packages
     sudo apt install -y steam-devices
@@ -144,10 +154,12 @@ install_onedrive() {
     echo
     echo "*** Installing new onedrive application ..."
     echo
-    wget -qO - https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /usr/share/keyrings/obs-onedrive.gpg > /dev/null
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/obs-onedrive.gpg] https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_24.04/ ./" | sudo tee /etc/apt/sources.list.d/onedrive.list
+    release=`lsb_release -rs`
+    wget -qO - https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_$release/Release.key | gpg --dearmor | sudo tee /usr/share/keyrings/obs-onedrive.gpg > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/obs-onedrive.gpg] https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_$release/ ./" | sudo tee /etc/apt/sources.list.d/onedrive.list
     sudo apt update
     sudo apt install --no-install-recommends --no-install-suggests -y onedrive
+
     echo
     echo "*** Starting onedrive service ..."
     echo
@@ -196,9 +208,9 @@ case $1 in
 	install_grub
 	install_vscode
 	install_onedrive
+	install_kicad
 	install_apps
 	install_mozilla_flatpak
-	#install_doublecommander
 	;;
     apps)
 	install_apps
@@ -211,6 +223,9 @@ case $1 in
 	;;
     onedrive)
 	install_onedrive
+	;;
+    kicad)
+	install_kicad
 	;;
     doublecommander)
 	install_doublecommander
