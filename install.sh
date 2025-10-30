@@ -93,6 +93,8 @@ install_apps() {
         com.prusa3d.PrusaSlicer \
         com.valvesoftware.Steam \
         com.valvesoftware.SteamLink \
+	com.heroicgameslauncher.hgl \
+	net.openra.OpenRA \
 	com.usebottles.bottles \
         com.obsproject.Studio \
         org.jdownloader.JDownloader \
@@ -108,16 +110,9 @@ install_apps() {
     flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
 
     # Temporary workaround for jdownloader
-    sudo flatpak update -y --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
-    flatpak run org.jdownloader.JDownloader
-    flatpak update -y org.jdownloader.JDownloader
-}
-
-install_doublecommander() {
-    echo 'deb http://download.opensuse.org/repositories/home:/Alexx2000/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:Alexx2000.list
-    curl -fsSL https://download.opensuse.org/repositories/home:Alexx2000/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_Alexx2000.gpg > /dev/null
-    sudo apt update
-    sudo apt install -y doublecmd-qt6
+    #sudo flatpak update -y --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
+    #flatpak run org.jdownloader.JDownloader
+    #flatpak update -y org.jdownloader.JDownloader
 }
 
 upgrade_curl() {
@@ -149,12 +144,14 @@ install_onedrive() {
     sudo add-apt-repository --remove ppa:yann1ck/onedrive
     sudo rm -f /etc/systemd/user/default.target.wants/onedrive.service
 
-    upgrade_curl
+    release=`lsb_release -rs`
+    if [ "$lsb_relesae" == "24.04" ]; then
+        upgrade_curl
+    fi
 
     echo
     echo "*** Installing new onedrive application ..."
     echo
-    release=`lsb_release -rs`
     wget -qO - https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_$release/Release.key | gpg --dearmor | sudo tee /usr/share/keyrings/obs-onedrive.gpg > /dev/null
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/obs-onedrive.gpg] https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_$release/ ./" | sudo tee /etc/apt/sources.list.d/onedrive.list
     sudo apt update
@@ -226,9 +223,6 @@ case $1 in
 	;;
     kicad)
 	install_kicad
-	;;
-    doublecommander)
-	install_doublecommander
 	;;
     code)
 	install_vscode
