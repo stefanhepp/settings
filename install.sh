@@ -20,6 +20,8 @@ install_settings() {
     mkdir -p ~/.ssh
     mkdir -p ~/tmp
     test -f ~/.ssh/config || cp -av home/.ssh/config ~/.ssh/
+    mkdir -p ~/.local/bin
+    cp -avf home/.local/bin/* ~/.local/bin
 }
 
 install_grub() {
@@ -208,6 +210,9 @@ case $1 in
 	install_kicad
 	install_apps
 	install_mozilla_flatpak
+	;;
+    settings)
+	install_settings
 	;;
     apps)
 	install_apps
