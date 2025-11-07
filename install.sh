@@ -153,7 +153,7 @@ install_onedrive() {
 
     release=`lsb_release -rs 2>/dev/null`
 
-    if [ "$release" == "24.10" ]; then
+    if [ "$release" == "24.04" ]; then
     	upgrade_curl
     fi
     # 25.10 repo not yet released
