@@ -77,7 +77,16 @@ install_kicad() {
     echo
     sudo add-apt-repository --yes ppa:kicad/kicad-9.0-releases
     sudo apt update
-    sudo apt install --install-recommends kicad
+    sudo apt install -y --install-recommends kicad
+}
+
+install_touchscreen() {
+    echo
+    echo "*** Installing virtual keyboard ..."
+    echo
+    #sudo apt install -y qt6-base-dev-tools qt6-base-dev qt6-declarative-dev qt6-virtualkeyboard-dev extra-cmake-modules libecm-dev
+    
+    sudo apt install -y maliit-keyboard
 }
 
 install_apps() {
@@ -89,6 +98,7 @@ install_apps() {
 
     sudo flatpak install -y \
         org.freecad.FreeCAD \
+	org.musescore.MuseScore \
         com.xnview.XnViewMP \
         com.jgraph.drawio.desktop \
 	com.jetbrains.PyCharm-Professional \
@@ -110,11 +120,6 @@ install_apps() {
     # Setup permissions
     flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
     flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
-
-    # Temporary workaround for jdownloader
-    #sudo flatpak update -y --commit=0ae5cd879a0a113a53806fd1651ef873871c4fbeec3782496fec37dd2c4dc09b org.jdownloader.JDownloader
-    #flatpak run org.jdownloader.JDownloader
-    #flatpak update -y org.jdownloader.JDownloader
 }
 
 upgrade_curl() {
@@ -142,13 +147,18 @@ install_onedrive() {
     echo
     echo "*** Removing old onedrive installation ..."
     echo
-    sudo apt remove onedrive
+    sudo apt remove -y onedrive
     sudo add-apt-repository --remove ppa:yann1ck/onedrive
     sudo rm -f /etc/systemd/user/default.target.wants/onedrive.service
 
-    release=`lsb_release -rs`
-    if [ "$lsb_relesae" == "24.04" ]; then
-        upgrade_curl
+    release=`lsb_release -rs 2>/dev/null`
+
+    if [ "$release" == "24.10" ]; then
+    	upgrade_curl
+    fi
+    # 25.10 repo not yet released
+    if [ "$release" == "25.10" ]; then
+	release="25.04"
     fi
 
     echo
@@ -228,6 +238,9 @@ case $1 in
 	;;
     kicad)
 	install_kicad
+	;;
+    touch)
+	install_touchscreen
 	;;
     code)
 	install_vscode
