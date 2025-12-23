@@ -44,9 +44,10 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install -y vim zsh screen ksshaskpass audacity vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl
+    sudo apt install -y vim zsh screen ksshaskpass vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl
     sudo apt install -y krusader krename arj rar unrar smb4k kde-config-flatpak
-    sudo apt install -y python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+    sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+    sudo apt install -y ardour audacity
 }
 
 install_mozilla_flatpak() {
