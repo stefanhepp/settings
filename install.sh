@@ -47,7 +47,7 @@ install_packages() {
     sudo apt install -y vim zsh screen ksshaskpass vlc kdenlive gimp inkscape kdevelop clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl scons
     sudo apt install -y krusader krename arj rar unrar smb4k kde-config-flatpak
     sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
-    sudo apt install -y ardour audacity
+    sudo apt install -y ardour audacity lmms
 }
 
 install_xtradebs() {
@@ -128,6 +128,7 @@ install_apps() {
         com.obsproject.Studio \
         org.jdownloader.JDownloader \
 	org.blender.Blender \
+	com.bitwig.BitwigStudio \
 	com.github.tchx84.Flatseal \
 	io.github.Omniaevo.mqtt5-explorer	
 
