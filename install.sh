@@ -50,6 +50,22 @@ install_packages() {
     sudo apt install -y ardour audacity
 }
 
+install_xtradebs() {
+    echo
+    echo "*** Installing xtraDeb packages ..."
+    echo
+
+    if [ ! -f /etc/apt/sources.list.d/xtradeb-ubuntu.sources ]; then
+        wget https://launchpad.net/~xtradeb/+archive/ubuntu/apps/+files/xtradeb-apt-source_0.4_all.deb -P /tmp
+	sudo apt install /tmp/xtradeb-apt-source_0.4_all.deb
+	rm /tmp/xtradeb-apt-source_0.4_all.deb 
+	sudo apt update
+    fi
+
+    # Using OpenRA from xtraDebs, since flatpak has lots of old dependencies
+    sudo apt install -y openra
+}
+
 install_mozilla_flatpak() {
     echo
     echo "*** Replacing Mozilla snaps with flatpak ..."
@@ -63,6 +79,7 @@ install_mozilla_flatpak() {
     sudo systemctl disable var-snap-firefox-common-host\\x2dhunspell.mount
     sudo snap remove firefox
     sudo snap remove thunderbird
+    sudo apt remove -y firefox thunderbird
 
     # Install flatpak
     sudo flatpak install -y \
@@ -107,7 +124,6 @@ install_apps() {
         com.valvesoftware.Steam \
         com.valvesoftware.SteamLink \
 	com.heroicgameslauncher.hgl \
-	net.openra.OpenRA \
 	com.usebottles.bottles \
         com.obsproject.Studio \
         org.jdownloader.JDownloader \
@@ -157,10 +173,6 @@ install_onedrive() {
     if [ "$release" == "24.04" ]; then
     	upgrade_curl
     fi
-    # 25.10 repo not yet released
-    if [ "$release" == "25.10" ]; then
-	release="25.04"
-    fi
 
     echo
     echo "*** Installing new onedrive application ..."
@@ -181,11 +193,20 @@ install_vscode() {
     echo
     echo "*** Adding VSCode repository ..."
     echo
-    sudo apt-get install wget gpg
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-    sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-    rm -f packages.microsoft.gpg
+    if [ ! -f /etc/apt/sources.list.d/vscode.sources ]; then
+	sudo apt-get install wget gpg
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+	rm -f packages.microsoft.gpg
+	sudo tee /etc/apt/sources.list.d/vscode.sources > /dev/null << EOL
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64,arm64,armhf
+Signed-By: /usr/share/keyrings/microsoft.gpg
+EOL
+    fi
 
     echo
     echo "*** Installing VSCode ..."
@@ -220,10 +241,14 @@ case $1 in
 	install_onedrive
 	install_kicad
 	install_apps
+	install_xtradebs
 	install_mozilla_flatpak
 	;;
     settings)
 	install_settings
+	;;
+    xtradebs)
+	install_xtradebs
 	;;
     apps)
 	install_apps
