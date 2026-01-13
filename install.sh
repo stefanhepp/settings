@@ -57,7 +57,7 @@ install_repos() {
     sudo apt install -y flatpak
     sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-    sudo apt install -y kde-config-flatpak
+    sudo apt install -y kde-config-flatpak plasma-discover-backend-flatpak
 
     sudo flatpak install -y \
 	com.github.tchx84.Flatseal
