@@ -51,6 +51,11 @@ install_packages() {
 
 install_repos() {
     echo
+    echo "*** Adding multiverse ..."
+    echo
+    sudo apt-add-repository -y multiverse
+
+    echo
     echo "*** Installing flatpak repositories ..."
     echo
 
@@ -291,13 +296,12 @@ install_games() {
     echo
 
     sudo flatpak install -y \
-        com.valvesoftware.Steam \
         com.valvesoftware.SteamLink \
 	com.heroicgameslauncher.hgl \
 	com.usebottles.bottles
 
-    # Install supporting packages
-    sudo apt install -y steam-devices
+    # Install Steam and supporting packages
+    sudo apt install -y steam steam-devices
 
     # Setup permissions
     flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
