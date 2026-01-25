@@ -267,6 +267,7 @@ install_media() {
 
     sudo flatpak install -y \
 	org.musescore.MuseScore \
+	net.sourceforge.GrandOrgue \
 	com.bitwig.BitwigStudio
 }
 
