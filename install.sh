@@ -126,6 +126,14 @@ install_touchscreen() {
     sudo apt install -y maliit-keyboard
 }
 
+install_lenovo() {
+    echo
+    echo "*** Installing apps for Lenovo Yoga laptop ..."
+    echo
+
+    sudo apt install -y thinkfan
+}
+
 install_apps() {
     echo
     echo "*** Installing flatpaks ..."
@@ -371,6 +379,10 @@ install() {
 	# Additional targets
 	touch)
 	    install_touchscreen
+	    ;;
+	lenovo)
+	    install_touchscreen
+	    install_lenovo
 	    ;;
 	flightsim)
 	    install_flightsim
