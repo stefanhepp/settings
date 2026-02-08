@@ -212,16 +212,16 @@ install_vscode() {
     echo
     if [ ! -f /etc/apt/sources.list.d/vscode.sources ]; then
 	sudo apt-get install wget gpg
-	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-	rm -f packages.microsoft.gpg
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+	sudo install -D -o root -g root -m 644 microsoft.gpg /etc/apt/keyrings/microsoft.gpg
+	rm -f microsoft.gpg
 	sudo tee /etc/apt/sources.list.d/vscode.sources > /dev/null << EOL
 Types: deb
 URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Architectures: amd64,arm64,armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
+Signed-By: /etc/apt/keyrings/microsoft.gpg
 EOL
     fi
 
@@ -257,6 +257,21 @@ install_dev() {
 	com.jetbrains.PyCharm-Professional \
 	com.google.AndroidStudio \
 	io.github.Omniaevo.mqtt5-explorer
+}
+
+install_rust() {
+    echo
+    echo "*** Installing rust ..."
+    echo
+
+    sudo apt remove -y rustc
+    sudo apt autoremove
+
+    # Install rustup
+    if [ ! -f ~/.cargo/bin/rustc ]; then
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    fi
+
 }
 
 install_media() {
@@ -307,14 +322,43 @@ install_games() {
     sudo flatpak install -y \
         com.valvesoftware.SteamLink \
 	com.heroicgameslauncher.hgl \
-	com.usebottles.bottles
+	com.usebottles.bottles \
+	org.DolphinEmu.dolphin-emu \
+	info.cemu.Cemu \
+	io.github.dosbox-staging
 
-    # Install Steam and supporting packages
-    sudo apt install -y steam steam-devices
+    # Install Steam, Epic, Gog clients and supporting packages
+    sudo apt install -y steam steam-devices lutris
+
+    # Install emulators
+    sudo apt install -y dosbox
 
     # Setup permissions
     flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
     flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
+    flatpak override --user com.heroicgameslauncher.hgl --talk-name=org.freedesktop.Flatpak
+}
+
+install_vr() {
+    echo
+    echo "*** Installing VR support ..."
+    echo
+
+    # Install dependencies for Envision VR app
+    sudo apt install -y libboost-all-dev libbz2-dev libeigen3-dev libfmt-dev libfmt-dev git-lfs \
+                        libglew-dev libglew-dev glslang-tools glslc libgtest-dev libbsd-dev libclang-19-dev \
+			libdrm-dev libepoxy-dev libgl1-mesa-dev libudev-dev libusb-1.0-0 libusb-1.0-0-dev \
+			libx11-xcb-dev libxcb-randr0-dev libxcb-glx0-dev libxrandr-dev liblz4-dev \
+			mesa-common-dev ninja-build libonnxruntime-dev libopencv-dev libopenxr-dev \
+			libsdl2-dev libtbb-dev libvulkan-dev libwayland-dev wayland-protocols
+
+    # Install BS-Manager
+    curl -fsSL https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/bs-manager.gpg
+    echo "deb [signed-by=/usr/share/keyrings/bs-manager.gpg] https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main ./" | sudo tee /etc/apt/sources.list.d/bs-manager.list
+    sudo apt update
+
+    sudo apt install bs-manager
+
 }
 
 install_flightsim() {
@@ -363,6 +407,7 @@ install() {
 	    install_vscode
 	    install_kvm
 	    install_dev
+	    install_rust
 	    ;;
 	cad)
 	    install_cad
@@ -386,6 +431,10 @@ install() {
 	    ;;
 	flightsim)
 	    install_flightsim
+	    ;;
+	vr)
+	    install_rust
+	    install_vr
 	    ;;
 
 	# Individual installers
