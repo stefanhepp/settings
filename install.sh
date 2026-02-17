@@ -44,6 +44,7 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
+    sudo apt install -y powertop dysk
     sudo apt install -y vim zsh screen ksshaskpass vlc gimp inkscape clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl scons
     sudo apt install -y krusader krename arj rar unrar smb4k
     sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
