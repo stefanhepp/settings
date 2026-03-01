@@ -351,11 +351,24 @@ install_vr() {
 			libx11-xcb-dev libxcb-randr0-dev libxcb-glx0-dev libxrandr-dev liblz4-dev \
 			mesa-common-dev ninja-build libonnxruntime-dev libopencv-dev libopenxr-dev \
 			libsdl2-dev libtbb-dev libvulkan-dev libwayland-dev wayland-protocols
+    
+    # Set SteamVR capabilities if SteamVR is nagging about incomplete setup
+    # Run after every update of SteamVR
+    #sudo setcap CAP_SYS_NICE=eip ~/.steam/steam/steamapps/common/SteamVR/bin/linux64/vrcompositor-launcher
+
+    # Install WiVRn
+    sudo flatpak install -y io.github.wivrn.wivrn
+    sudo apt install -y adb
+
+    # Install WayVR
+    # wget https://github.com/wlx-team/wayvr/releases/download/v26.2.1/WayVR-v26.2.1-x86_64.AppImage
 
     # Install BS-Manager
-    curl -fsSL https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/bs-manager.gpg
-    echo "deb [signed-by=/usr/share/keyrings/bs-manager.gpg] https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main ./" | sudo tee /etc/apt/sources.list.d/bs-manager.list
-    sudo apt update
+    if [ ! -f /etc/apt/sources.list.d/bs-manager.list ]; then
+        curl -fsSL https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/bs-manager.gpg
+	echo "deb [signed-by=/usr/share/keyrings/bs-manager.gpg] https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main ./" | sudo tee /etc/apt/sources.list.d/bs-manager.list
+        sudo apt update
+    fi
 
     sudo apt install bs-manager
 
