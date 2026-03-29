@@ -44,10 +44,10 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install -y powertop dysk
-    sudo apt install -y vim zsh screen ksshaskpass vlc gimp inkscape clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl scons
-    sudo apt install -y krusader krename arj rar unrar smb4k
-    sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv
+    sudo apt install -y vim zsh screen progress powertop ksshaskpass openssh-server
+    sudo apt install -y clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl scons
+    sudo apt install -y krusader krename arj rar unrar smb4k vlc qimgv
+    sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv python3-build
 }
 
 install_repos() {
@@ -110,6 +110,10 @@ install_mozilla_flatpak() {
     sudo snap remove thunderbird
     sudo apt remove -y firefox thunderbird
 
+    # remove snap completely and block it being installed
+    sudo apt autoremove --purge snapd
+    sudo apt-mark hold snapd
+
     # Install flatpak
     sudo flatpak install -y \
         org.mozilla.firefox \
@@ -142,6 +146,7 @@ install_apps() {
 
     sudo flatpak install -y \
         com.xnview.XnViewMP \
+	net.epson.epsonscan2 \
         com.jgraph.drawio.desktop \
         org.jdownloader.JDownloader
 }
@@ -287,7 +292,7 @@ install_media() {
     sudo apt install -y obs-studio
 
     sudo apt install -y kdenlive gimp inkscape scons avidemux-qt
-    sudo apt install -y ardour audacity lmms
+    sudo apt install -y ardour audacity lmms midisnoop
 
     sudo flatpak install -y \
 	org.musescore.MuseScore \
@@ -323,10 +328,12 @@ install_games() {
     sudo flatpak install -y \
         com.valvesoftware.SteamLink \
 	com.heroicgameslauncher.hgl \
-	com.usebottles.bottles \
 	org.DolphinEmu.dolphin-emu \
 	info.cemu.Cemu \
-	io.github.dosbox-staging
+
+    # No need:
+    # com.usebottles.bottles
+    # io.github.dosbox-staging
 
     # Install Steam, Epic, Gog clients and supporting packages
     sudo apt install -y steam steam-devices lutris
@@ -335,9 +342,9 @@ install_games() {
     sudo apt install -y dosbox
 
     # Setup permissions
-    flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
-    flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
     flatpak override --user com.heroicgameslauncher.hgl --talk-name=org.freedesktop.Flatpak
+    #flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
+    #flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
 }
 
 install_vr() {
@@ -352,11 +359,24 @@ install_vr() {
 			libx11-xcb-dev libxcb-randr0-dev libxcb-glx0-dev libxrandr-dev liblz4-dev \
 			mesa-common-dev ninja-build libonnxruntime-dev libopencv-dev libopenxr-dev \
 			libsdl2-dev libtbb-dev libvulkan-dev libwayland-dev wayland-protocols
+    
+    # Set SteamVR capabilities if SteamVR is nagging about incomplete setup
+    # Run after every update of SteamVR
+    #sudo setcap CAP_SYS_NICE=eip ~/.steam/steam/steamapps/common/SteamVR/bin/linux64/vrcompositor-launcher
+
+    # Install WiVRn
+    sudo flatpak install -y io.github.wivrn.wivrn
+    sudo apt install -y adb
+
+    # Install WayVR
+    # wget https://github.com/wlx-team/wayvr/releases/download/v26.2.1/WayVR-v26.2.1-x86_64.AppImage
 
     # Install BS-Manager
-    curl -fsSL https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/bs-manager.gpg
-    echo "deb [signed-by=/usr/share/keyrings/bs-manager.gpg] https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main ./" | sudo tee /etc/apt/sources.list.d/bs-manager.list
-    sudo apt update
+    if [ ! -f /etc/apt/sources.list.d/bs-manager.list ]; then
+        curl -fsSL https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/bs-manager.gpg
+	echo "deb [signed-by=/usr/share/keyrings/bs-manager.gpg] https://raw.githubusercontent.com/silentrald/bs-manager-deb/refs/heads/main ./" | sudo tee /etc/apt/sources.list.d/bs-manager.list
+        sudo apt update
+    fi
 
     sudo apt install bs-manager
 
@@ -419,7 +439,6 @@ install() {
 	    ;;
 	games)
 	    install_games
-	    install_xtradebs
 	    ;;
 
 	# Additional targets
@@ -436,6 +455,9 @@ install() {
 	vr)
 	    install_rust
 	    install_vr
+	    ;;
+	xtradebs)
+	    install_xtradebs
 	    ;;
 
 	# Individual installers
@@ -459,9 +481,6 @@ install() {
 	    ;;
 	kicad)
 	    install_kicad
-	    ;;
-	xtradebs)
-	    install_xtradebs
 	    ;;
 	*)
 	    echo "Invalid option: $1"
