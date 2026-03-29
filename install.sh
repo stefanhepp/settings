@@ -110,6 +110,10 @@ install_mozilla_flatpak() {
     sudo snap remove thunderbird
     sudo apt remove -y firefox thunderbird
 
+    # remove snap completely and block it being installed
+    sudo apt autoremove --purge snapd
+    sudo apt-mark hold snapd
+
     # Install flatpak
     sudo flatpak install -y \
         org.mozilla.firefox \
@@ -324,10 +328,12 @@ install_games() {
     sudo flatpak install -y \
         com.valvesoftware.SteamLink \
 	com.heroicgameslauncher.hgl \
-	com.usebottles.bottles \
 	org.DolphinEmu.dolphin-emu \
 	info.cemu.Cemu \
-	io.github.dosbox-staging
+
+    # No need:
+    # com.usebottles.bottles
+    # io.github.dosbox-staging
 
     # Install Steam, Epic, Gog clients and supporting packages
     sudo apt install -y steam steam-devices lutris
@@ -336,9 +342,9 @@ install_games() {
     sudo apt install -y dosbox
 
     # Setup permissions
-    flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
-    flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
     flatpak override --user com.heroicgameslauncher.hgl --talk-name=org.freedesktop.Flatpak
+    #flatpak override --user com.usebottles.bottles --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam
+    #flatpak override --user com.usebottles.bottles --talk-name=org.freedesktop.Flatpak 
 }
 
 install_vr() {
@@ -433,7 +439,6 @@ install() {
 	    ;;
 	games)
 	    install_games
-	    install_xtradebs
 	    ;;
 
 	# Additional targets
@@ -450,6 +455,9 @@ install() {
 	vr)
 	    install_rust
 	    install_vr
+	    ;;
+	xtradebs)
+	    install_xtradebs
 	    ;;
 
 	# Individual installers
@@ -473,9 +481,6 @@ install() {
 	    ;;
 	kicad)
 	    install_kicad
-	    ;;
-	xtradebs)
-	    install_xtradebs
 	    ;;
 	*)
 	    echo "Invalid option: $1"
