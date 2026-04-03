@@ -304,7 +304,7 @@ install_kicad() {
     echo
     echo "*** Installing KiCAD ..."
     echo
-    sudo add-apt-repository --yes ppa:kicad/kicad-9.0-releases
+    sudo add-apt-repository --yes ppa:kicad/kicad-10.0-releases
     sudo apt update
     sudo apt install -y --install-recommends kicad
 }
