@@ -44,7 +44,7 @@ install_packages() {
     echo
     echo "*** Installing standard software ..."
     echo
-    sudo apt install -y vim zsh screen progress powertop ksshaskpass openssh-server
+    sudo apt install -y vim zsh screen progress powertop ksshaskpass openssh-server openvpn network-manager-openvpn-gnome
     sudo apt install -y clang clang-tidy cppcheck cmake cmake-gui git gitk kdiff3 net-tools curl scons
     sudo apt install -y krusader krename arj rar unrar smb4k vlc qimgv
     sudo apt install -y pipx python3-pip python3-serial python3-numpy python3-scipy python3-opencv python3-tk python3-pil.imagetk python3-venv python3-build
@@ -68,15 +68,19 @@ install_repos() {
     sudo flatpak install -y \
 	com.github.tchx84.Flatseal
 
-    echo
-    echo "*** Install AppImageLauncher ..."
-    echo
+    # Check for AppImageLauncher..
+    dpkg -l appimagelauncher >/dev/null
+    if [ "$?" != "0" ]; then
+        echo
+	echo "*** Install AppImageLauncher ..."
+        echo
     
-    package=appimagelauncher_3.0.0-beta-2-gha287.96cb937_amd64.deb
+	package=appimagelauncher_3.0.0-beta-2-gha287.96cb937_amd64.deb
 
-    wget https://github.com/TheAssassin/AppImageLauncher/releases/download/v3.0.0-beta-3/$package -P /tmp
-    sudo apt install /tmp/$package
-    rm /tmp/$package
+        wget https://github.com/TheAssassin/AppImageLauncher/releases/download/v3.0.0-beta-3/$package -P /tmp
+	sudo apt install /tmp/$package
+	rm /tmp/$package
+    fi
 }
 
 install_xtradebs() {
