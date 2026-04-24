@@ -265,8 +265,16 @@ install_dev() {
 
     sudo flatpak install -y \
 	com.jetbrains.PyCharm-Professional \
-	com.google.AndroidStudio \
 	io.github.Omniaevo.mqtt5-explorer
+}
+
+install_android() {
+    echo
+    echo "*** Installing Android Dev Tools ..."
+    echo
+
+    sudo flatpak install -y \
+	com.google.AndroidStudio
 }
 
 install_rust() {
@@ -282,6 +290,22 @@ install_rust() {
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     fi
 
+}
+
+install_platformio() {
+    echo
+    echo "*** Installing platformio ..."
+    echo
+
+    if [ ! -f ~/.local/bin/platformio ]; then
+	wget -O /tmp/get-platformio.py https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py
+	python3 /tmp/get-platformio.py
+	rm -f /tmp/get-platformio.py
+
+	ln -s ~/.platformio/penv/bin/platformio ~/.local/bin/platformio
+	ln -s ~/.platformio/penv/bin/pio ~/.local/bin/pio
+	ln -s ~/.platformio/penv/bin/piodebuggdb ~/.local/bin/piodebuggdb
+    fi
 }
 
 install_media() {
@@ -357,12 +381,12 @@ install_vr() {
     echo
 
     # Install dependencies for Envision VR app
-    sudo apt install -y libboost-all-dev libbz2-dev libeigen3-dev libfmt-dev libfmt-dev git-lfs \
-                        libglew-dev libglew-dev glslang-tools glslc libgtest-dev libbsd-dev libclang-19-dev \
-			libdrm-dev libepoxy-dev libgl1-mesa-dev libudev-dev libusb-1.0-0 libusb-1.0-0-dev \
-			libx11-xcb-dev libxcb-randr0-dev libxcb-glx0-dev libxrandr-dev liblz4-dev \
-			mesa-common-dev ninja-build libonnxruntime-dev libopencv-dev libopenxr-dev \
-			libsdl2-dev libtbb-dev libvulkan-dev libwayland-dev wayland-protocols
+    #sudo apt install -y libboost-all-dev libbz2-dev libeigen3-dev libfmt-dev libfmt-dev git-lfs \
+    #                    libglew-dev libglew-dev glslang-tools glslc libgtest-dev libbsd-dev libclang-19-dev \
+    #   		libdrm-dev libepoxy-dev libgl1-mesa-dev libudev-dev libusb-1.0-0 libusb-1.0-0-dev \
+    #			libx11-xcb-dev libxcb-randr0-dev libxcb-glx0-dev libxrandr-dev liblz4-dev \
+    #			mesa-common-dev ninja-build libonnxruntime-dev libopencv-dev libopenxr-dev \
+    #			libsdl2-dev libtbb-dev libvulkan-dev libwayland-dev wayland-protocols
     
     # Set SteamVR capabilities if SteamVR is nagging about incomplete setup
     # Run after every update of SteamVR
@@ -430,9 +454,9 @@ install() {
 	    ;; 
 	dev)
 	    install_vscode
-	    install_kvm
 	    install_dev
 	    install_rust
+	    install_platformio
 	    ;;
 	cad)
 	    install_cad
@@ -453,12 +477,18 @@ install() {
 	    install_touchscreen
 	    install_lenovo
 	    ;;
+	android)
+	    install_android
+	    ;;
 	flightsim)
 	    install_flightsim
 	    ;;
 	vr)
 	    install_rust
 	    install_vr
+	    ;;
+	kvm)
+	    install_kvm
 	    ;;
 	xtradebs)
 	    install_xtradebs
